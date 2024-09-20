@@ -1,0 +1,11 @@
+@import 'normalize.css';
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: "Neucha", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+}

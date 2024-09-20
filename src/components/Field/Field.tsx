@@ -36,7 +36,7 @@ export const Field: React.FC<FieldProps> = ({ fieldType }) => {
             </FieldRow>
           ))
         }
-        { ships.map((ship, index) => (
+        { fieldType === PLAYER_TYPE.USER && ships.map((ship, index) => (
           <Ship
             key={ index }
             index={ index }

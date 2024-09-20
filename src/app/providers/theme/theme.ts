@@ -2,10 +2,12 @@ export const theme = {
   primaryColor: '#009ac5',
   secondaryColor: '#f1f1f1',
   dangerColor: '#c30000',
+  shipColor: '#006188',
 
   borderColor: '#838383',
   borderLineWidthSM: '1px',
   borderLineWidthMD: '2px',
+  borderLineWidthLG: '3px',
   borderRadiusMD: '10px',
 
   marginSM: '10px',

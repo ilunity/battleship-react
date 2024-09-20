@@ -1,10 +1,12 @@
 import styled from "styled-components";
 
+export const cellSize = 36;
+
 export const CellWrapper = styled.div`
-    height: 30px;
-    width: 30px;
+    height: ${cellSize}px;
+    width: ${cellSize}px;
     background-color: ${(props) => props.theme.backgroundTransparent};
-    border: 1px solid ${(props) => props.theme.primaryColor};
+    border: 1px solid ${(props) => props.theme.borderColor};
 
     display: flex;
     justify-content: center;

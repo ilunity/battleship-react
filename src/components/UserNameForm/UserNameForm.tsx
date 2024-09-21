@@ -20,8 +20,10 @@ export const UserNameForm: React.FC = () => {
     event.preventDefault();
 
     if (validateForm()) {
-      startGame();
+      return startGame();
     }
+
+    setErrorMessage('Введите имя пользователя!');
   };
 
   const validateForm = () => {
@@ -29,7 +31,6 @@ export const UserNameForm: React.FC = () => {
       return true;
     }
 
-    setErrorMessage('Введите имя пользователя!');
     return false;
   };
 

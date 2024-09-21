@@ -12,12 +12,13 @@ export const GameOverScreen: React.FC = () => {
   const score = useSelector((state: RootState) => state.game.score);
   const username = useSelector((state: RootState) => state.app.username);
 
-  const winner = score[PLAYER_TYPE.USER] > score[PLAYER_TYPE.ENEMY]
-    ? PLAYER_TYPE.USER
-    : PLAYER_TYPE.ENEMY;
+  const [winner, loser] = score[PLAYER_TYPE.USER] > score[PLAYER_TYPE.ENEMY]
+    ? [PLAYER_TYPE.USER, PLAYER_TYPE.ENEMY]
+    : [PLAYER_TYPE.ENEMY, PLAYER_TYPE.USER];
 
   const winnerName = winner === PLAYER_TYPE.USER ? username : 'компьютер';
-  const winnerScore = score[winner];
+  const [winnerScore, loserScore] = [score[winner], score[loser]];
+
 
   const goToStartScreen = () => {
     dispatch(setScreen(SCREEN_TYPE.START));
@@ -30,7 +31,7 @@ export const GameOverScreen: React.FC = () => {
         : <GameLostBG />
       }
       <WinnerPanel>
-        Выиграл { winnerName } со счетом { winnerScore }
+        Выиграл { winnerName } со счетом { winnerScore }:{ loserScore }
       </WinnerPanel>
       <Button
         onClick={ goToStartScreen }

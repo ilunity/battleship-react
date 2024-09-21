@@ -49,8 +49,8 @@ export const Timer: React.FC = () => {
       </TimerClock>
       {
         status === 'started'
-          ? <Button onClick={ pause }> Пауза</Button>
-          : <Button onClick={ start }> Старт </Button>
+          ? <Button onClick={ pause }>Пауза</Button>
+          : <Button onClick={ start }>Старт</Button>
       }
     </TimerContainer>
   );

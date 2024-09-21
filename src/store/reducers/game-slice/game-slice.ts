@@ -35,6 +35,9 @@ export const gameSlice = createSlice({
     setScore: (state, { payload: { player, score } }: PayloadAction<SetScorePayload>) => {
       state.score[player] = score;
     },
+    incrementScore: (state, { payload: { player, score } }: PayloadAction<SetScorePayload>) => {
+      state.score[player] += score;
+    },
     incrementTimer: (state, action: PayloadAction<number>) => {
       state.timer.time += action.payload;
     },
@@ -59,5 +62,5 @@ export const gameSlice = createSlice({
 });
 
 const { actions, reducer } = gameSlice;
-export const { setScore, incrementTimer, startTimer, stopTimer, setCell, rotateShip } = actions;
+export const { setScore, incrementScore, incrementTimer, startTimer, stopTimer, setCell, rotateShip } = actions;
 export { reducer as gameReducer };

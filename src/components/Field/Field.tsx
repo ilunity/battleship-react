@@ -16,34 +16,36 @@ const FieldTypeTitle = {
 export const Field: React.FC<FieldProps> = ({ fieldType }) => {
   const { fieldStatuses, ships } = useSelector((state: RootState) => state.game[fieldType]);
 
+  const fieldStatusesElements = fieldStatuses.map((row, x) => (
+    <FieldRow key={ x }>
+      { row.map((cellType, y) => (
+        <FieldCell
+          key={ y }
+          type={ cellType }
+          x={ x }
+          y={ y }
+        />
+      )) }
+    </FieldRow>
+  ));
+
+  const shipsElements = fieldType === PLAYER_TYPE.USER && ships.map((ship, index) => (
+    <Ship
+      key={ index }
+      index={ index }
+      shipState={ ship }
+      fieldType={ fieldType }
+    />
+  ));
+
   return (
     <FieldOuterContainer>
       <FieldTitle>
         { FieldTypeTitle[fieldType] }
       </FieldTitle>
       <FieldInnerContainer>
-        {
-          fieldStatuses.map((row, x) => (
-            <FieldRow key={ x }>
-              { row.map((cellType, y) => (
-                <FieldCell
-                  key={ y }
-                  type={ cellType }
-                  x={ x }
-                  y={ y }
-                />
-              )) }
-            </FieldRow>
-          ))
-        }
-        { fieldType === PLAYER_TYPE.USER && ships.map((ship, index) => (
-          <Ship
-            key={ index }
-            index={ index }
-            shipState={ ship }
-            fieldType={ fieldType }
-          />
-        )) }
+        { fieldStatusesElements }
+        { shipsElements }
       </FieldInnerContainer>
     </FieldOuterContainer>
   );

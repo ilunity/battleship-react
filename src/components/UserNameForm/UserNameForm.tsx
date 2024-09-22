@@ -27,11 +27,7 @@ export const UserNameForm: React.FC = () => {
   };
 
   const validateForm = () => {
-    if (userName.length > 0) {
-      return true;
-    }
-
-    return false;
+    return userName.length > 0;
   };
 
   const startGame = () => {

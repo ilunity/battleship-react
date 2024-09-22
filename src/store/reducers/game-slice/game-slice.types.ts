@@ -1,8 +1,3 @@
-export interface TimerState {
-  time: number;
-  status: 'started' | 'stopped';
-}
-
 export enum FIELD_CELL_TYPE {
   NONE = 'none',
   MISS = 'miss',
@@ -36,8 +31,15 @@ export interface GameScore {
   [PLAYER_TYPE.ENEMY]: number;
 }
 
+export enum GAME_STATUS {
+  SHIPS_ARRANGEMENT = 'shipsArrangement',
+  STARTED = 'started',
+  STOPPED = 'stopped',
+}
+
 export interface GameSliceState {
-  timer: TimerState;
+  time: number;
+  status: `${GAME_STATUS}`;
   score: GameScore;
   [PLAYER_TYPE.USER]: FieldState;
   [PLAYER_TYPE.ENEMY]: FieldState;

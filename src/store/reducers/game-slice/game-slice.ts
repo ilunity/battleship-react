@@ -1,6 +1,7 @@
 import {
   FIELD_CELL_TYPE,
   FieldState,
+  GAME_STATUS,
   GameSliceState,
   PLAYER_TYPE,
   RotateShipPayload,
@@ -20,10 +21,8 @@ const initialState: GameSliceState = {
     [PLAYER_TYPE.USER]: 0,
     [PLAYER_TYPE.ENEMY]: 0,
   },
-  timer: {
-    time: 0,
-    status: 'started',
-  },
+  time: 0,
+  status: GAME_STATUS.SHIPS_ARRANGEMENT,
   [PLAYER_TYPE.USER]: initialField,
   [PLAYER_TYPE.ENEMY]: initialField,
 };
@@ -39,13 +38,13 @@ export const gameSlice = createSlice({
       state.score[player] += score;
     },
     incrementTimer: (state, action: PayloadAction<number>) => {
-      state.timer.time += action.payload;
+      state.time += action.payload;
     },
-    startTimer: (state) => {
-      state.timer.status = 'started';
+    startGame: (state) => {
+      state.status = GAME_STATUS.STARTED;
     },
-    stopTimer: (state) => {
-      state.timer.status = 'stopped';
+    stopGame: (state) => {
+      state.status = GAME_STATUS.STOPPED;
     },
     setCell: (state, { payload: { fieldType, x, y, cellType } }: PayloadAction<SetCellPayload>) => {
       state[fieldType].fieldStatuses[x][y] = cellType;
@@ -62,5 +61,5 @@ export const gameSlice = createSlice({
 });
 
 const { actions, reducer } = gameSlice;
-export const { setScore, incrementScore, incrementTimer, startTimer, stopTimer, setCell, rotateShip } = actions;
+export const { setScore, incrementScore, incrementTimer, startGame, stopGame, setCell, rotateShip } = actions;
 export { reducer as gameReducer };

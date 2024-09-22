@@ -7,7 +7,8 @@ export const FieldOuterContainer = styled.div`
 `;
 
 export const FieldInnerContainer = styled.div`
-    border: 1px solid ${(props) => props.theme.primaryColor};
+    position: relative;
+    border: 1px solid ${(props) => props.theme.borderColor};
 `;
 
 export const FieldTitle = styled.h3`

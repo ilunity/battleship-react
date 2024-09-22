@@ -19,7 +19,10 @@ export interface ShipState {
 export interface FieldState {
   fieldStatuses: `${FIELD_CELL_TYPE}`[][];
   ships: ShipState[];
+  cellsWithShip: CellsWithShip;
 }
+
+export type CellsWithShip = Record<string, boolean>;
 
 export enum PLAYER_TYPE {
   USER = 'user',
@@ -57,6 +60,19 @@ export interface SetCellPayload {
   x: number;
   y: number;
   cellType: `${FIELD_CELL_TYPE}`;
+}
+
+export interface CheckShipOnCellPayload {
+  field: `${PLAYER_TYPE}`;
+  x: number;
+  y: number;
+}
+
+export interface MoveShipPayload {
+  field: `${PLAYER_TYPE}`;
+  index: number;
+  x: number;
+  y: number;
 }
 
 export interface RotateShipPayload {

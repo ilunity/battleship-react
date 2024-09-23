@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
-export const cellSize = 36;
+export const CELL_SIZE = 36;
 
 export const CellWrapper = styled.div`
-    height: ${cellSize}px;
-    width: ${cellSize}px;
+    height: ${CELL_SIZE}px;
+    width: ${CELL_SIZE}px;
     background-color: ${(props) => props.theme.backgroundTransparent};
     border: 1px solid ${(props) => props.theme.borderColor};
 

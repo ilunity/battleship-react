@@ -1,13 +1,14 @@
 import React, { MouseEventHandler } from 'react';
-import { ShipDragSourceProps, ShipProps } from './Ship.types';
+import { ShipDragReturnProps, ShipDragSourceProps, ShipProps } from './Ship.types';
 import { StyledShip } from './Ship.styles.ts';
 import { useDispatch } from 'react-redux';
-import { rotateShip, useValidateShipRotate } from '../../store/reducers/game-slice';
+import { rotateShip, useValidateShipRotate, ValidateShipRotateOptions } from '../../store/reducers/game-slice';
 import { useDrag } from 'react-dnd';
 
 
 export const Ship: React.FC<ShipProps> = (
   {
+    unplaced = false,
     shipState: { position, ...ship },
     index,
     fieldType,
@@ -16,27 +17,32 @@ export const Ship: React.FC<ShipProps> = (
 ) => {
   const validateShipRotate = useValidateShipRotate();
   const dispatch = useDispatch();
-  const [, drag] = useDrag<ShipDragSourceProps>(() => ({
+  const [{ isDragging }, drag] = useDrag<ShipDragSourceProps, unknown, ShipDragReturnProps>(() => ({
     type: 'ship',
     canDrag: () => draggable,
-    item: { index },
-  }), [draggable]);
+    item: {
+      index,
+      unplaced,
+      size: unplaced ? ship.size : undefined,
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }), [draggable, ship]);
 
   const handleRightClick: MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
-    if (!draggable) {
+    if (!draggable || unplaced) {
       return;
     }
 
-    handleRotateShip();
+    handleRotateShip({
+      shipIndex: index as number,
+      field: fieldType,
+    });
   };
 
-  const handleRotateShip = () => {
-    const rotateOptions = {
-      index,
-      field: fieldType,
-    };
-
+  const handleRotateShip = (rotateOptions: ValidateShipRotateOptions) => {
     if (!validateShipRotate(rotateOptions)) {
       return;
     }
@@ -51,6 +57,7 @@ export const Ship: React.FC<ShipProps> = (
       onContextMenu={ handleRightClick }
       { ...ship }
       draggable={ draggable }
+      isDragging={ isDragging }
     />
   );
 };

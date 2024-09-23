@@ -14,6 +14,7 @@ export const MainScreenBG = styled(BGBase)`
 `;
 
 export const MainScreenInfo = styled.div`
+    height: 50px;
     width: 100%;
     display: flex;
     justify-content: space-between;

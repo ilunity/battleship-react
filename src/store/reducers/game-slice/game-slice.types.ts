@@ -16,9 +16,14 @@ export interface ShipState {
   size: number;
 }
 
+type ShipSize = number;
+type ShipsCount = number;
+export type UnplacedShipState = Record<ShipSize, ShipsCount>;
+
 export interface FieldState {
   fieldStatuses: `${FIELD_CELL_TYPE}`[][];
   ships: ShipState[];
+  unplacedShips: UnplacedShipState;
   cellsWithShip: CellsWithShip;
 }
 
@@ -68,14 +73,21 @@ export interface CheckShipOnCellPayload {
   y: number;
 }
 
-export interface MoveShipPayload {
+export interface ArrangeShipPayload {
   field: `${PLAYER_TYPE}`;
-  index: number;
+  size: number;
   x: number;
   y: number;
 }
 
+export interface MoveShipPayload {
+  field: `${PLAYER_TYPE}`;
+  shipIndex: number;
+  xTo: number;
+  yTo: number;
+}
+
 export interface RotateShipPayload {
   field: `${PLAYER_TYPE}`;
-  index: number;
+  shipIndex: number;
 }

@@ -3,10 +3,12 @@ import React, { ReactNode } from 'react';
 import { FieldCellProps } from './FieldCell.types';
 import { CellWrapper, HitIconWrapper, MissIconWrapper } from './FieldCell.styles.ts';
 import {
+  arrangeShip,
+  ArrangeShipPayload,
   FIELD_CELL_TYPE,
   moveShip,
   MoveShipPayload,
-  PLAYER_TYPE,
+  PLAYER_TYPE, useValidateShipArrange,
   useValidateShipMove,
 } from '../../store/reducers/game-slice';
 import MissIcon from '../../assets/game/miss.svg?react';
@@ -32,31 +34,59 @@ const cellTypeContentMap: Record<`${FIELD_CELL_TYPE}`, ReactNode> = {
 
 export const FieldCell: React.FC<FieldCellProps> = ({ x, y, type }) => {
   const validateShipMove = useValidateShipMove();
+  const validateShipArrange = useValidateShipArrange();
   const dispatch = useDispatch();
 
-  const handleShipDrop = (moveShipOptions: Omit<MoveShipPayload, 'field'>) => {
+  const handleShipDrop = ({ index, unplaced, size }: ShipDragSourceProps) => {
+    if (unplaced) {
+      return handleShipAdd(size as number);
+    }
+
+    handleShipMove({ shipIndex: index as number, xTo: x, yTo: y });
+  };
+
+  const handleShipAdd = (size: number) => {
+    const arrangeShipOptions: ArrangeShipPayload = {
+      field: PLAYER_TYPE.USER,
+      x,
+      y,
+      size,
+    };
+
+    dispatch(arrangeShip(arrangeShipOptions));
+  };
+
+  const handleShipMove = (moveShipOptions: Omit<MoveShipPayload, 'field'>) => {
     dispatch(moveShip({
       ...moveShipOptions,
       field: PLAYER_TYPE.USER,
     }));
   };
 
+  const validateDrop = ({ index, unplaced, size }: ShipDragSourceProps) => {
+    return unplaced
+      ? validateShipArrange({
+        x,
+        y,
+        field: PLAYER_TYPE.USER,
+        size: size as number,
+      })
+      : validateShipMove({
+        xTo: x,
+        yTo: y,
+        field: PLAYER_TYPE.USER,
+        shipIndex: index as number,
+      });
+  };
+
   const [, drop] = useDrop<ShipDragSourceProps>(
     () => ({
       accept: 'ship',
-      drop: ({ index }) => handleShipDrop({ index, x, y }),
-      canDrop: ({ index }) => {
-        return validateShipMove({
-          x,
-          y,
-          field: PLAYER_TYPE.USER,
-          index,
-        });
-      },
+      drop: handleShipDrop,
+      canDrop: validateDrop,
     }),
     [x, y, validateShipMove],
   );
-
 
   return (
     <CellWrapper ref={ drop }>

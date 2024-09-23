@@ -57,10 +57,11 @@ export const Timer: React.FC = () => {
         Время игры { minutes }:{ seconds }
       </TimerClock>
       {
-        isNotShipsArrangementStatus &&
-        gameStatus === GAME_STATUS.STARTED
-          ? <Button onClick={ pause }>Пауза</Button>
-          : <Button onClick={ start }>Старт</Button>
+        isNotShipsArrangementStatus && (
+          gameStatus === GAME_STATUS.STARTED
+            ? <Button onClick={ pause }>Пауза</Button>
+            : <Button onClick={ start }>Старт</Button>
+        )
       }
     </TimerContainer>
   );

@@ -1,24 +1,63 @@
 import React, { MouseEventHandler } from 'react';
-import { ShipProps } from './Ship.types';
+import { ShipDragReturnProps, ShipDragSourceProps, ShipProps } from './Ship.types';
 import { StyledShip } from './Ship.styles.ts';
 import { useDispatch } from 'react-redux';
-import { rotateShip } from '../../store/reducers/game-slice';
+import { rotateShip, useValidateShipRotate, ValidateShipRotateOptions } from '../../store/reducers/game-slice';
+import { useDrag } from 'react-dnd';
 
 
-export const Ship: React.FC<ShipProps> = ({ shipState: { position, ...ship }, index, fieldType, fixed = false }) => {
+export const Ship: React.FC<ShipProps> = (
+  {
+    unplaced = false,
+    shipState: { position, ...ship },
+    index,
+    fieldType,
+    draggable = false,
+  },
+) => {
+  const validateShipRotate = useValidateShipRotate();
   const dispatch = useDispatch();
+  const [{ isDragging }, drag] = useDrag<ShipDragSourceProps, unknown, ShipDragReturnProps>(() => ({
+    type: 'ship',
+    canDrag: () => draggable,
+    item: {
+      index,
+      unplaced,
+      size: unplaced ? ship.size : undefined,
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }), [draggable, ship]);
 
   const handleRightClick: MouseEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
-    dispatch(rotateShip({ index, field: fieldType }));
+    if (!draggable || unplaced) {
+      return;
+    }
+
+    handleRotateShip({
+      shipIndex: index as number,
+      field: fieldType,
+    });
+  };
+
+  const handleRotateShip = (rotateOptions: ValidateShipRotateOptions) => {
+    if (!validateShipRotate(rotateOptions)) {
+      return;
+    }
+
+    dispatch(rotateShip(rotateOptions));
   };
 
   return (
     <StyledShip
+      ref={ drag }
       shipPosition={ position }
       onContextMenu={ handleRightClick }
       { ...ship }
-      fixedShipPosition={ fixed }
+      draggable={ draggable }
+      isDragging={ isDragging }
     />
   );
 };

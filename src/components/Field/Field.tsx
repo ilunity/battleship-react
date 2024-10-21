@@ -13,7 +13,7 @@ const FieldTypeTitle = {
   [PLAYER_TYPE.ENEMY]: 'Вражеское поле',
 };
 
-export const Field: React.FC<FieldProps> = ({ fieldType }) => {
+export const Field: React.FC<FieldProps> = ({ fieldType, draggableShips = false }) => {
   const { fieldStatuses, ships } = useSelector((state: RootState) => state.game[fieldType]);
 
   const fieldStatusesElements = fieldStatuses.map((row, x) => (
@@ -35,6 +35,7 @@ export const Field: React.FC<FieldProps> = ({ fieldType }) => {
       index={ index }
       shipState={ ship }
       fieldType={ fieldType }
+      draggable={ draggableShips }
     />
   ));
 

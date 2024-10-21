@@ -5,6 +5,7 @@ export const theme = {
   shipColor: '#006188',
 
   borderColor: '#838383',
+  borderColorTransparent: 'rgba(131,131,131,0.5)',
   borderLineWidthSM: '1px',
   borderLineWidthMD: '2px',
   borderLineWidthLG: '3px',

@@ -1,8 +1,3 @@
-export interface TimerState {
-  time: number;
-  status: 'started' | 'stopped';
-}
-
 export enum FIELD_CELL_TYPE {
   NONE = 'none',
   MISS = 'miss',
@@ -21,10 +16,18 @@ export interface ShipState {
   size: number;
 }
 
+type ShipSize = number;
+type ShipsCount = number;
+export type UnplacedShipState = Record<ShipSize, ShipsCount>;
+
 export interface FieldState {
   fieldStatuses: `${FIELD_CELL_TYPE}`[][];
   ships: ShipState[];
+  unplacedShips: UnplacedShipState;
+  cellsWithShip: CellsWithShip;
 }
+
+export type CellsWithShip = Record<string, boolean>;
 
 export enum PLAYER_TYPE {
   USER = 'user',
@@ -36,8 +39,15 @@ export interface GameScore {
   [PLAYER_TYPE.ENEMY]: number;
 }
 
+export enum GAME_STATUS {
+  SHIPS_ARRANGEMENT = 'shipsArrangement',
+  STARTED = 'started',
+  STOPPED = 'stopped',
+}
+
 export interface GameSliceState {
-  timer: TimerState;
+  time: number;
+  status: `${GAME_STATUS}`;
   score: GameScore;
   [PLAYER_TYPE.USER]: FieldState;
   [PLAYER_TYPE.ENEMY]: FieldState;
@@ -57,7 +67,27 @@ export interface SetCellPayload {
   cellType: `${FIELD_CELL_TYPE}`;
 }
 
+export interface CheckShipOnCellPayload {
+  field: `${PLAYER_TYPE}`;
+  x: number;
+  y: number;
+}
+
+export interface ArrangeShipPayload {
+  field: `${PLAYER_TYPE}`;
+  size: number;
+  x: number;
+  y: number;
+}
+
+export interface MoveShipPayload {
+  field: `${PLAYER_TYPE}`;
+  shipIndex: number;
+  xTo: number;
+  yTo: number;
+}
+
 export interface RotateShipPayload {
   field: `${PLAYER_TYPE}`;
-  index: number;
+  shipIndex: number;
 }

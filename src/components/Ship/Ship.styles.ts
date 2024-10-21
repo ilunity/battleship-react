@@ -1,18 +1,21 @@
 import styled from 'styled-components';
-import { cellSize } from '../FieldCell/FieldCell.styles.ts';
+import { CELL_SIZE } from '../FieldCell/FieldCell.styles.ts';
 import { SHIP_POSITION, ShipState } from '../../store/reducers/game-slice';
 
 interface StyledShipProps extends Pick<ShipState, 'x' | 'y' | 'size'> {
   shipPosition: ShipState['position'];
-  fixedShipPosition: boolean;
+  draggable: boolean;
+  isDragging: boolean;
 }
 
 export const StyledShip = styled.div<StyledShipProps>`
-    width: ${props => props.shipPosition === SHIP_POSITION.HORIZONTAL ? cellSize * +props.size : cellSize}px;
-    height: ${props => props.shipPosition === SHIP_POSITION.VERTICAL ? cellSize * +props.size : cellSize}px;
+    display: ${props => props.isDragging ? 'none' : 'block'};
+    width: ${props => props.shipPosition === SHIP_POSITION.HORIZONTAL ? CELL_SIZE * +props.size : CELL_SIZE}px;
+    height: ${props => props.shipPosition === SHIP_POSITION.VERTICAL ? CELL_SIZE * +props.size : CELL_SIZE}px;
     border: ${({ theme }) => `${theme.borderLineWidthLG} solid ${theme.shipColor}`};
     position: absolute;
-    top: ${props => cellSize * props.y}px;
-    left: ${props => cellSize * props.x}px;
-    cursor: ${props => props.fixedShipPosition ? 'auto' : 'pointer'};
+    top: ${props => CELL_SIZE * props.x}px;
+    left: ${props => CELL_SIZE * props.y}px;
+    cursor: ${props => props.draggable ? 'pointer' : 'auto'};
+    z-index: 1;
 `;

@@ -4,13 +4,13 @@ export enum FIELD_CELL_TYPE {
   HIT = 'hit',
 }
 
-export enum SHIP_POSITION {
+export enum SHIP_DIRECTION {
   VERTICAL = 'vertical',
   HORIZONTAL = 'horizontal',
 }
 
 export interface ShipState {
-  position: `${SHIP_POSITION}`;
+  direction: `${SHIP_DIRECTION}`;
   x: number;
   y: number;
   size: number;
@@ -78,6 +78,7 @@ export interface ArrangeShipPayload {
   size: number;
   x: number;
   y: number;
+  direction: `${SHIP_DIRECTION}`;
 }
 
 export interface MoveShipPayload {
@@ -90,4 +91,12 @@ export interface MoveShipPayload {
 export interface RotateShipPayload {
   field: `${PLAYER_TYPE}`;
   shipIndex: number;
+}
+
+export interface RandomShipLocationPayload {
+  field: `${PLAYER_TYPE}`;
+}
+
+export interface ClearFieldPayload {
+  field: `${PLAYER_TYPE}`;
 }

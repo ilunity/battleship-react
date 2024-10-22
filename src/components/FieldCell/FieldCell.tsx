@@ -8,7 +8,9 @@ import {
   FIELD_CELL_TYPE,
   moveShip,
   MoveShipPayload,
-  PLAYER_TYPE, useValidateShipArrange,
+  PLAYER_TYPE,
+  SHIP_DIRECTION,
+  useValidateShipArrange,
   useValidateShipMove,
 } from '../../store/reducers/game-slice';
 import MissIcon from '../../assets/game/miss.svg?react';
@@ -51,6 +53,7 @@ export const FieldCell: React.FC<FieldCellProps> = ({ x, y, type }) => {
       x,
       y,
       size,
+      direction: SHIP_DIRECTION.HORIZONTAL,
     };
 
     dispatch(arrangeShip(arrangeShipOptions));
@@ -70,6 +73,7 @@ export const FieldCell: React.FC<FieldCellProps> = ({ x, y, type }) => {
         y,
         field: PLAYER_TYPE.USER,
         size: size as number,
+        direction: SHIP_DIRECTION.HORIZONTAL
       })
       : validateShipMove({
         xTo: x,

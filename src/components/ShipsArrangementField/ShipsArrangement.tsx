@@ -1,6 +1,13 @@
 import React from 'react';
-import { ShipsArrangementContainer, UnplacedShipsContainer } from './ShipsArrangement.styles.ts';
-import { PLAYER_TYPE, SHIP_POSITION, ShipState, startGame } from '../../store/reducers/game-slice';
+import { ButtonsPanel, ShipsArrangementContainer, UnplacedShipsContainer } from './ShipsArrangement.styles.ts';
+import {
+  clearField,
+  PLAYER_TYPE,
+  randomShipLocation,
+  SHIP_DIRECTION,
+  ShipState,
+  startGame,
+} from '../../store/reducers/game-slice';
 import { Ship } from '../Ship';
 import { Field } from '../Field';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +24,7 @@ export const ShipsArrangement: React.FC = () => {
   Object.entries(shipsCount).forEach(([shipSize, count]) => {
     for (let i = 0; i < count; i++) {
       shipsToArrange.push({
-        position: SHIP_POSITION.HORIZONTAL,
+        direction: SHIP_DIRECTION.HORIZONTAL,
         size: +shipSize,
         x: (+shipSize - 1) * 2,
         y: i * (+shipSize + 1),
@@ -25,12 +32,13 @@ export const ShipsArrangement: React.FC = () => {
     }
   });
 
-  const handleStateGame = () => {
+  const handleStartGame = () => {
     dispatch(startGame());
   };
 
   const ships = shipsToArrange.map((ship) => (
     <Ship
+      key={ `${ship.x} + ${ship.y}` }
       fieldType={ PLAYER_TYPE.USER }
       shipState={ ship }
       draggable
@@ -38,22 +46,38 @@ export const ShipsArrangement: React.FC = () => {
     />
   ));
 
+  const handleRandomLocation = () => {
+    dispatch(randomShipLocation({ field: PLAYER_TYPE.USER }));
+  };
+
+  const clear = () => {
+    dispatch(clearField({ field: PLAYER_TYPE.USER }));
+  };
+
   return (
     <ShipsArrangementContainer>
       <Field
         fieldType={ PLAYER_TYPE.USER }
         draggableShips />
+      <ButtonsPanel>
+        <Button onClick={ handleRandomLocation }>
+          Случайная расстановка
+        </Button>
+        <Button onClick={ clear }>
+          Очистить поле
+        </Button>
+        { ships.length === 0 && (
+          <Button onClick={ handleStartGame }>
+            Начать игру
+          </Button>
+        ) }
+      </ButtonsPanel>
       <FieldOuterContainer>
         <FieldTitle>
           Расставьте корабли:
         </FieldTitle>
         <UnplacedShipsContainer>
           { ships }
-          { ships.length === 0 && (
-            <Button onClick={ handleStateGame }>
-              Начать игру
-            </Button>
-          ) }
         </UnplacedShipsContainer>
       </FieldOuterContainer>
     </ShipsArrangementContainer>

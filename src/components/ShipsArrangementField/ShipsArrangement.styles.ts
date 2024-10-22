@@ -9,6 +9,12 @@ export const ShipsArrangementContainer = styled.div`
     gap: ${props => props.theme.marginLG};
 `;
 
+export const ButtonsPanel = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: ${props => props.theme.marginSM};
+`;
+
 export const UnplacedShipsContainer = styled.div`
     display: flex;
     justify-content: center;
@@ -19,5 +25,3 @@ export const UnplacedShipsContainer = styled.div`
     height: ${CELL_SIZE * 10}px;
     position: relative;
 `;
-
-// export const StartGameButtonWrapper

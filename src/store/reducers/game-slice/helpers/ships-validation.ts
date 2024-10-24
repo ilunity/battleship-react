@@ -3,7 +3,7 @@ import {
   GameSliceState,
   MoveShipPayload,
   RotateShipPayload,
-  SHIP_POSITION,
+  SHIP_DIRECTION,
   ShipState,
 } from '../game-slice.types.ts';
 import { getShipCellsSteps } from './ships-interactions.ts';
@@ -48,13 +48,14 @@ export const validateShipArrange = (state: GameSliceState, {
   y,
   field,
   size,
+  direction,
 }: ValidateShipArrangeOptions) => {
   const cellsWithShip = state[field].cellsWithShip;
 
   const ship: ShipState = {
     x,
     y,
-    position: SHIP_POSITION.HORIZONTAL,
+    direction,
     size,
   };
 
@@ -83,9 +84,9 @@ export const validateShipRotate = (state: GameSliceState, {
 
   const newPositionShip: ShipState = {
     ...ship,
-    position: ship.position === SHIP_POSITION.HORIZONTAL
-      ? SHIP_POSITION.VERTICAL
-      : SHIP_POSITION.HORIZONTAL,
+    direction: ship.direction === SHIP_DIRECTION.HORIZONTAL
+      ? SHIP_DIRECTION.VERTICAL
+      : SHIP_DIRECTION.HORIZONTAL,
   };
 
   return validateCells({

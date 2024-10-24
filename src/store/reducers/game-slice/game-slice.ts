@@ -1,21 +1,21 @@
 import {
-  ArrangeShipPayload,
+  ArrangeShipPayload, ClearFieldPayload,
   FIELD_CELL_TYPE,
   FieldState,
   GAME_STATUS,
   GameSliceState,
   MoveShipPayload,
-  PLAYER_TYPE,
+  PLAYER_TYPE, RandomShipLocationPayload,
   RotateShipPayload,
   SetCellPayload,
   SetScorePayload,
-  SHIP_POSITION, ShipState,
+  SHIP_DIRECTION,
 } from './game-slice.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  addCellsWithShip,
+  addCellsWithShip, addShip,
   moveCellsWithShip,
-  moveShipsState,
+  moveShipsState, randomLocation,
   removeCellsWithShip, validateShipArrange,
   validateShipMove,
   validateShipRotate,
@@ -58,6 +58,7 @@ export const gameSlice = createSlice({
       state.time += action.payload;
     },
     startGame: (state) => {
+      randomLocation(state, PLAYER_TYPE.ENEMY);
       state.status = GAME_STATUS.STARTED;
     },
     stopGame: (state) => {
@@ -71,20 +72,7 @@ export const gameSlice = createSlice({
         throw new Error('Ship arrange validation error');
       }
 
-      const { x, y, size, field } = payload;
-      const ship: ShipState = {
-        x,
-        y,
-        size,
-        position: SHIP_POSITION.HORIZONTAL,
-      };
-
-      addCellsWithShip(state, {
-        ship,
-        field,
-      });
-      state[field].ships.push(ship);
-      state[field].unplacedShips[size] -= 1;
+      addShip(state, payload);
     },
     moveShip: (state, { payload }: PayloadAction<MoveShipPayload>) => {
       if (!validateShipMove(state, payload)) {
@@ -103,12 +91,18 @@ export const gameSlice = createSlice({
 
       const { field, shipIndex } = payload;
       const ship = state[field].ships[shipIndex];
-      state[field].ships[shipIndex].position =
-        ship.position === SHIP_POSITION.HORIZONTAL
-          ? SHIP_POSITION.VERTICAL
-          : SHIP_POSITION.HORIZONTAL;
+      state[field].ships[shipIndex].direction =
+        ship.direction === SHIP_DIRECTION.HORIZONTAL
+          ? SHIP_DIRECTION.VERTICAL
+          : SHIP_DIRECTION.HORIZONTAL;
 
       addCellsWithShip(state, { field, ship });
+    },
+    randomShipLocation: (state, { payload: { field } }: PayloadAction<RandomShipLocationPayload>) => {
+      randomLocation(state, field);
+    },
+    clearField: (state, { payload: { field } }: PayloadAction<ClearFieldPayload>) => {
+      state[field] = initialField;
     },
   },
 });
@@ -124,5 +118,7 @@ export const {
   arrangeShip,
   moveShip,
   rotateShip,
+  randomShipLocation,
+  clearField,
 } = actions;
 export { reducer as gameReducer };

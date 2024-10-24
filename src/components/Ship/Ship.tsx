@@ -9,7 +9,7 @@ import { useDrag } from 'react-dnd';
 export const Ship: React.FC<ShipProps> = (
   {
     unplaced = false,
-    shipState: { position, ...ship },
+    shipState: { direction, ...ship },
     index,
     fieldType,
     draggable = false,
@@ -53,7 +53,7 @@ export const Ship: React.FC<ShipProps> = (
   return (
     <StyledShip
       ref={ drag }
-      shipPosition={ position }
+      direction={ direction }
       onContextMenu={ handleRightClick }
       { ...ship }
       draggable={ draggable }

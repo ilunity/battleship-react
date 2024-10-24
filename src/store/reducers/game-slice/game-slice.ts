@@ -1,37 +1,6 @@
-import {
-  ArrangeShipPayload, ClearFieldPayload,
-  FIELD_CELL_TYPE,
-  FieldState,
-  GAME_STATUS,
-  GameSliceState,
-  MoveShipPayload,
-  PLAYER_TYPE, RandomShipLocationPayload,
-  RotateShipPayload,
-  SetCellPayload,
-  SetScorePayload,
-  SHIP_DIRECTION,
-} from './game-slice.types.ts';
+import { GAME_STATUS, GameSliceState, SetScorePayload, SetStatusPayload } from './game-slice.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  addCellsWithShip, addShip,
-  moveCellsWithShip,
-  moveShipsState, randomLocation,
-  removeCellsWithShip, validateShipArrange,
-  validateShipMove,
-  validateShipRotate,
-} from './helpers';
-
-const initialField: FieldState = {
-  fieldStatuses: new Array(10).fill(0).map(() => new Array(10).fill(FIELD_CELL_TYPE.NONE)),
-  ships: [],
-  cellsWithShip: {},
-  unplacedShips: {
-    1: 4,
-    2: 3,
-    3: 2,
-    4: 1,
-  },
-};
+import { PLAYER_TYPE } from '../field-slice';
 
 const initialState: GameSliceState = {
   score: {
@@ -40,8 +9,6 @@ const initialState: GameSliceState = {
   },
   time: 0,
   status: GAME_STATUS.SHIPS_ARRANGEMENT,
-  [PLAYER_TYPE.USER]: initialField,
-  [PLAYER_TYPE.ENEMY]: initialField,
 };
 
 export const gameSlice = createSlice({
@@ -57,52 +24,8 @@ export const gameSlice = createSlice({
     incrementTimer: (state, action: PayloadAction<number>) => {
       state.time += action.payload;
     },
-    startGame: (state) => {
-      randomLocation(state, PLAYER_TYPE.ENEMY);
-      state.status = GAME_STATUS.STARTED;
-    },
-    stopGame: (state) => {
-      state.status = GAME_STATUS.STOPPED;
-    },
-    setCell: (state, { payload: { fieldType, x, y, cellType } }: PayloadAction<SetCellPayload>) => {
-      state[fieldType].fieldStatuses[x][y] = cellType;
-    },
-    arrangeShip: (state, { payload }: PayloadAction<ArrangeShipPayload>) => {
-      if (!validateShipArrange(state, payload)) {
-        throw new Error('Ship arrange validation error');
-      }
-
-      addShip(state, payload);
-    },
-    moveShip: (state, { payload }: PayloadAction<MoveShipPayload>) => {
-      if (!validateShipMove(state, payload)) {
-        throw new Error('Ship move validation error');
-      }
-
-      moveCellsWithShip(state, payload);
-      moveShipsState(state, payload);
-    },
-    rotateShip: (state, { payload }: PayloadAction<RotateShipPayload>) => {
-      if (!validateShipRotate(state, payload)) {
-        throw new Error('Ship rotate validation error');
-      }
-
-      removeCellsWithShip(state, payload);
-
-      const { field, shipIndex } = payload;
-      const ship = state[field].ships[shipIndex];
-      state[field].ships[shipIndex].direction =
-        ship.direction === SHIP_DIRECTION.HORIZONTAL
-          ? SHIP_DIRECTION.VERTICAL
-          : SHIP_DIRECTION.HORIZONTAL;
-
-      addCellsWithShip(state, { field, ship });
-    },
-    randomShipLocation: (state, { payload: { field } }: PayloadAction<RandomShipLocationPayload>) => {
-      randomLocation(state, field);
-    },
-    clearField: (state, { payload: { field } }: PayloadAction<ClearFieldPayload>) => {
-      state[field] = initialField;
+    setStatus: (state, { payload }:PayloadAction<SetStatusPayload>) => {
+      state.status = payload;
     },
   },
 });
@@ -112,13 +35,6 @@ export const {
   setScore,
   incrementScore,
   incrementTimer,
-  startGame,
-  stopGame,
-  setCell,
-  arrangeShip,
-  moveShip,
-  rotateShip,
-  randomShipLocation,
-  clearField,
+  setStatus,
 } = actions;
 export { reducer as gameReducer };

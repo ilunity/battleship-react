@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Button } from '../Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { GAME_STATUS, incrementTimer, startGame, stopGame } from '../../store/reducers/game-slice';
+import { GAME_STATUS, incrementTimer, setStatus } from '../../store/reducers/game-slice';
 import { TimerClock, TimerContainer } from './Timer.styles.ts';
 
 
@@ -29,12 +29,12 @@ export const Timer: React.FC = () => {
       dispatch(incrementTimer(diff));
       prevTimeRef.current = now;
     }, 1000);
-    dispatch(startGame());
+    dispatch(setStatus(GAME_STATUS.STARTED));
   };
 
   const pause = () => {
     clearInterval(intervalRef.current);
-    dispatch(stopGame());
+    dispatch(setStatus(GAME_STATUS.STOPPED));
   };
 
   useEffect(() => {

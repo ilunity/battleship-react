@@ -1,29 +1,31 @@
 import React, { MouseEventHandler } from 'react';
 import { ShipDragReturnProps, ShipDragSourceProps, ShipProps } from './Ship.types';
 import { StyledShip } from './Ship.styles.ts';
-import { useDispatch } from 'react-redux';
-import { rotateShip, useValidateShipRotate, ValidateShipRotateOptions } from '../../store/reducers/game-slice';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
+import { RootState, rotateShip } from '../../store';
+import { RotateShipPayload, useValidateShipRotate } from '../../store/reducers/field-slice';
 
 
 export const Ship: React.FC<ShipProps> = (
   {
-    unplaced = false,
-    shipState: { direction, ...ship },
-    index,
+    id,
     fieldType,
+    x,
+    y,
     draggable = false,
   },
 ) => {
+  const ship = useSelector((state: RootState) => state.field[fieldType].ships[id]);
+  const unplaced = ship.unplaced;
   const validateShipRotate = useValidateShipRotate();
   const dispatch = useDispatch();
   const [{ isDragging }, drag] = useDrag<ShipDragSourceProps, unknown, ShipDragReturnProps>(() => ({
     type: 'ship',
     canDrag: () => draggable,
     item: {
-      index,
+      id,
       unplaced,
-      size: unplaced ? ship.size : undefined,
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -37,12 +39,12 @@ export const Ship: React.FC<ShipProps> = (
     }
 
     handleRotateShip({
-      shipIndex: index as number,
-      field: fieldType,
+      id,
+      fieldType,
     });
   };
 
-  const handleRotateShip = (rotateOptions: ValidateShipRotateOptions) => {
+  const handleRotateShip = (rotateOptions: RotateShipPayload) => {
     if (!validateShipRotate(rotateOptions)) {
       return;
     }
@@ -50,14 +52,17 @@ export const Ship: React.FC<ShipProps> = (
     dispatch(rotateShip(rotateOptions));
   };
 
+
   return (
     <StyledShip
       ref={ drag }
-      direction={ direction }
       onContextMenu={ handleRightClick }
-      { ...ship }
       draggable={ draggable }
       isDragging={ isDragging }
+      size={ ship.size }
+      x={ x }
+      y={ y }
+      direction={ ship.position.direction }
     />
   );
 };

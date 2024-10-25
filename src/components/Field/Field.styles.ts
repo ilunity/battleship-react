@@ -7,6 +7,7 @@ export const FieldOuterContainer = styled.div`
 `;
 
 export const FieldInnerContainer = styled.div`
+    display: flex;
     position: relative;
     border: 1px solid ${(props) => props.theme.borderColor};
 `;
@@ -18,4 +19,5 @@ export const FieldTitle = styled.h3`
 
 export const FieldRow = styled.div`
     display: flex;
+    flex-direction: column;
 `;

@@ -10,7 +10,7 @@ import { ShipDragSourceProps } from '../Ship';
 import {
   AddShipPayload,
   arrangeShip,
-  CELL_STATUS, moveShip,
+  CELL_STATUS, makeShot, moveShip,
   PLAYER_TYPE,
   useValidateCells,
 } from '../../store/reducers/field-slice';
@@ -31,7 +31,14 @@ const cellTypeContentMap: Record<CELL_STATUS, ReactNode> = {
   ),
 };
 
-export const FieldCell: React.FC<FieldCellProps> = ({ x, y, type }) => {
+export const FieldCell: React.FC<FieldCellProps> = (
+  {
+    x,
+    y,
+    cellType,
+    fieldType,
+  },
+) => {
   const validateCells = useValidateCells();
   const ships = useSelector((state: RootState) => state.field[PLAYER_TYPE.USER].ships);
   const dispatch = useDispatch();
@@ -56,7 +63,6 @@ export const FieldCell: React.FC<FieldCellProps> = ({ x, y, type }) => {
     }
   };
 
-
   const validateDrop = ({ id }: ShipDragSourceProps) => {
     const shipDirection = ships[id].position.direction;
 
@@ -80,9 +86,23 @@ export const FieldCell: React.FC<FieldCellProps> = ({ x, y, type }) => {
     [x, y, validateDrop],
   );
 
+  const handleClick = () => {
+    if (fieldType !== PLAYER_TYPE.ENEMY) {
+      return;
+    }
+
+    dispatch(makeShot({
+      fieldType: PLAYER_TYPE.ENEMY,
+      x,
+      y,
+    }));
+  };
+
   return (
-    <CellWrapper ref={ drop }>
-      { cellTypeContentMap[type] }
+    <CellWrapper
+      ref={ drop }
+      onClick={ handleClick }>
+      { cellTypeContentMap[cellType] }
     </CellWrapper>
   );
 };

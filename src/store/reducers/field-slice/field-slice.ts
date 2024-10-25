@@ -1,7 +1,7 @@
 import {
   ArrangeShipPayload,
   CELL_STATUS, ClearLocationPayload,
-  FieldSliceState,
+  FieldSliceState, MakeShotPayload,
   MoveShipPayload,
   PLAYER_TYPE,
   PlayerFieldState, RandomLocationPayload,
@@ -12,7 +12,7 @@ import {
 } from './field-slice.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  addShip, clearFieldHelper,
+  addShip, clearFieldHelper, makeShotHelper,
   moveShipHelper, randomLocationHelper,
   rotateShipHelper,
   validateCells,
@@ -34,6 +34,7 @@ const initShips = () => {
           direction: SHIP_DIRECTION.HORIZONTAL,
         },
         status: SHIP_STATUS.UNDAMAGED,
+        damage: 0,
         size,
         id,
       };
@@ -92,9 +93,12 @@ export const fieldSlice = createSlice({
     clearField: (state, { payload }: PayloadAction<ClearLocationPayload>) => {
       clearFieldHelper(state, payload);
     },
+    makeShot: (state, { payload }: PayloadAction<MakeShotPayload>) => {
+      makeShotHelper(state, payload);
+    },
   },
 });
 
 const { actions, reducer } = fieldSlice;
-export const { arrangeShip, moveShip, rotateShip, randomShipsLocation, clearField } = actions;
+export const { arrangeShip, moveShip, rotateShip, randomShipsLocation, clearField, makeShot } = actions;
 export { reducer as fieldReducer };

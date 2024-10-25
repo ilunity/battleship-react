@@ -1,9 +1,18 @@
 import {
-  AddShipPayload, ClearLocationPayload,
+  AddShipPayload,
+  CELL_STATUS,
+  ClearLocationPayload,
   FieldSliceState,
-  MoveShipPayload, PLAYER_TYPE, RandomLocationPayload, RemoveShipPayload, RotateShipPayload,
+  MakeShotPayload,
+  MoveShipPayload,
+  PLAYER_TYPE,
+  RandomLocationPayload,
+  RemoveShipPayload,
+  RotateShipPayload,
   Ship,
-  SHIP_DIRECTION, SHIP_STATUS, ShipPosition,
+  SHIP_DIRECTION,
+  SHIP_STATUS,
+  ShipPosition,
 } from '../field-slice.types.ts';
 import { validateCells } from './ships-validation.ts';
 
@@ -57,6 +66,7 @@ export const removeShipHelper: ShipsHelperFunction<RemoveShipPayload, void> = (s
     direction: SHIP_DIRECTION.HORIZONTAL,
   };
   ship.status = SHIP_STATUS.UNDAMAGED;
+  ship.damage = 0;
 };
 
 export const moveShipHelper: ShipsHelperFunction<MoveShipPayload, void> = (state, payload) => {
@@ -210,4 +220,20 @@ export const getBorderedCells = (ship: Ship) => {
   }
 
   return borderedCells;
+};
+
+export const makeShotHelper: ShipsHelperFunction<MakeShotPayload, void> = (state, { fieldType, x, y }) => {
+  const cell = state[fieldType].cells[x][y];
+  if (!cell.shipId) {
+    cell.status = CELL_STATUS.MISS;
+    return;
+  }
+
+  cell.status = CELL_STATUS.HIT;
+
+  const ship = state[fieldType].ships[cell.shipId];
+  ship.damage++;
+
+  const isShipSunk = ship.damage === ship.size;
+  ship.status = isShipSunk ? SHIP_STATUS.SUNK : SHIP_STATUS.DAMAGED;
 };

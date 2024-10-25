@@ -15,11 +15,11 @@ export interface PlayerFieldState {
 
 export interface Ship {
   id: string;
-  // cells: CellKey[];
   status: SHIP_STATUS;
   position: ShipPosition;
   size: number;
   unplaced: boolean;
+  damage: number;
 }
 
 
@@ -87,4 +87,10 @@ export interface RandomLocationPayload {
 
 export interface ClearLocationPayload {
   fieldType: PLAYER_TYPE;
+}
+
+export interface MakeShotPayload {
+  fieldType: PLAYER_TYPE;
+  x: number;
+  y: number;
 }

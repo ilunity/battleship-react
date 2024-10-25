@@ -17,13 +17,14 @@ export const Field: React.FC<FieldProps> = ({ fieldType, draggableShips = false 
   const ships = useSelector((state: RootState) => state.field[fieldType].ships);
   const cells = useSelector((state: RootState) => state.field[fieldType].cells);
 
-  const fieldStatusesElements = cells.map((column, y) => (
-    <FieldRow key={ y }>
+  const fieldStatusesElements = cells.map((column, x) => (
+    <FieldRow key={ x }>
       {
-        column.map((cell, x) => (
+        column.map((cell, y) => (
           <FieldCell
-            key={ x }
-            type={ cell.status }
+            key={ y }
+            cellType={ cell.status }
+            fieldType={ fieldType }
             x={ x }
             y={ y }
           />

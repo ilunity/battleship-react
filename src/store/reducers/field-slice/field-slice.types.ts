@@ -1,6 +1,20 @@
 export interface FieldSliceState {
+  time: number;
+  status: `${GAME_STATUS}`;
+  score: GameScore;
   [PLAYER_TYPE.USER]: PlayerFieldState;
   [PLAYER_TYPE.ENEMY]: PlayerFieldState;
+}
+
+export interface GameScore {
+  [PLAYER_TYPE.USER]: number;
+  [PLAYER_TYPE.ENEMY]: number;
+}
+
+export enum GAME_STATUS {
+  SHIPS_ARRANGEMENT = 'shipsArrangement',
+  STARTED = 'started',
+  STOPPED = 'stopped',
 }
 
 export enum PLAYER_TYPE {
@@ -60,6 +74,13 @@ export enum SHIP_DIRECTION {
 }
 
 // --------------------------------------------------------------------------------------------------------------------
+
+export interface SetScorePayload {
+  player: PLAYER_TYPE;
+  score: number;
+}
+
+export type SetStatusPayload = GAME_STATUS;
 
 export interface AddShipPayload {
   fieldType: PLAYER_TYPE;

@@ -3,10 +3,9 @@ import { ButtonsPanel, ShipsArrangementContainer, UnplacedShipsContainer } from 
 import { Ship } from '../Ship';
 import { Field } from '../Field';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearField, randomShipsLocation, RootState } from '../../store';
+import { clearField, randomShipsLocation, RootState, setStatus } from '../../store';
 import { FieldOuterContainer, FieldTitle } from '../Field/Field.styles.ts';
-import { PLAYER_TYPE, Ship as ShipState } from '../../store/reducers/field-slice';
-import { GAME_STATUS, setStatus } from '../../store/reducers/game-slice';
+import { GAME_STATUS, PLAYER_TYPE, Ship as ShipState } from '../../store/reducers/field-slice';
 import { Button } from '../Button';
 
 

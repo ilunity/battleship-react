@@ -5,7 +5,7 @@ import { RootState } from "../../store";
 
 
 export const Score: React.FC = () => {
-  const { user, enemy } = useSelector((state: RootState) => state.game.score);
+  const { user, enemy } = useSelector((state: RootState) => state.field.score);
 
   return (
     <ScoreContainer>

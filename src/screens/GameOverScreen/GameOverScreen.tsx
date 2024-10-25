@@ -9,7 +9,7 @@ import { PLAYER_TYPE } from '../../store/reducers/field-slice';
 
 export const GameOverScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const score = useSelector((state: RootState) => state.game.score);
+  const score = useSelector((state: RootState) => state.field.score);
   const username = useSelector((state: RootState) => state.app.username);
 
   const [winner, loser] = score[PLAYER_TYPE.USER] > score[PLAYER_TYPE.ENEMY]

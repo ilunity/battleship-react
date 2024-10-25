@@ -1,11 +1,11 @@
 import {
   ArrangeShipPayload,
   CELL_STATUS, ClearLocationPayload,
-  FieldSliceState, MakeShotPayload,
+  FieldSliceState, GAME_STATUS, MakeShotPayload,
   MoveShipPayload,
   PLAYER_TYPE,
   PlayerFieldState, RandomLocationPayload,
-  RotateShipPayload,
+  RotateShipPayload, SetScorePayload, SetStatusPayload,
   Ship,
   SHIP_DIRECTION,
   SHIP_STATUS,
@@ -56,12 +56,30 @@ const initialPlayerFieldState: PlayerFieldState = {
 const initialState: FieldSliceState = {
   [PLAYER_TYPE.USER]: initialPlayerFieldState,
   [PLAYER_TYPE.ENEMY]: initialPlayerFieldState,
+  score: {
+    [PLAYER_TYPE.USER]: 0,
+    [PLAYER_TYPE.ENEMY]: 0,
+  },
+  time: 0,
+  status: GAME_STATUS.SHIPS_ARRANGEMENT,
 };
 
 export const fieldSlice = createSlice({
   name: 'field',
   initialState,
   reducers: {
+    setScore: (state, { payload: { player, score } }: PayloadAction<SetScorePayload>) => {
+      state.score[player] = score;
+    },
+    incrementScore: (state, { payload: { player, score } }: PayloadAction<SetScorePayload>) => {
+      state.score[player] += score;
+    },
+    incrementTimer: (state, action: PayloadAction<number>) => {
+      state.time += action.payload;
+    },
+    setStatus: (state, { payload }: PayloadAction<SetStatusPayload>) => {
+      state.status = payload;
+    },
     arrangeShip: (state, { payload }: PayloadAction<ArrangeShipPayload>) => {
       const validationResult = validateCells(state, payload);
       if (!validationResult) {
@@ -100,5 +118,16 @@ export const fieldSlice = createSlice({
 });
 
 const { actions, reducer } = fieldSlice;
-export const { arrangeShip, moveShip, rotateShip, randomShipsLocation, clearField, makeShot } = actions;
+export const {
+  setScore,
+  incrementScore,
+  incrementTimer,
+  setStatus,
+  arrangeShip,
+  moveShip,
+  rotateShip,
+  randomShipsLocation,
+  clearField,
+  makeShot,
+} = actions;
 export { reducer as fieldReducer };

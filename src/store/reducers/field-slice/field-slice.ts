@@ -1,23 +1,34 @@
 import {
   ArrangeShipPayload,
-  CELL_STATUS, ClearLocationPayload,
-  FieldSliceState, GAME_STATUS, MakeShotPayload,
+  CELL_STATUS,
+  ClearLocationPayload,
+  FieldSliceState,
+  GAME_STATUS,
+  MakeShotPayload,
   MoveShipPayload,
   PLAYER_TYPE,
-  PlayerFieldState, RandomLocationPayload,
-  RotateShipPayload, SetScorePayload, SetStatusPayload,
+  PlayerFieldState,
+  RandomLocationPayload,
+  RotateShipPayload,
+  SetScorePayload,
+  SetStatusPayload,
   Ship,
   SHIP_DIRECTION,
   SHIP_STATUS,
 } from './field-slice.types.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  addShip, clearFieldHelper, makeShotHelper,
-  moveShipHelper, randomLocationHelper,
+  addShip,
+  clearFieldHelper,
+  makeComputerShotHelper,
+  makeShotHelper,
+  moveShipHelper,
+  randomLocationHelper,
   rotateShipHelper,
   validateCells,
   validateRotate,
 } from './helpers';
+import { getRandomBoolean } from '../../../utils';
 
 const initShips = () => {
   const ships: Record<string, Ship> = {};
@@ -53,15 +64,34 @@ const initialPlayerFieldState: PlayerFieldState = {
   ships: initShips(),
 };
 
+const initLowPriorityCellsObj = () => {
+  const lowPriorityCellsObj: Record<string, boolean> = {};
+
+  for (let x = 0; x < 10; x++) {
+    for (let y = 0; y < 10; y++) {
+      const cellKey = `${x}:${y}`;
+      lowPriorityCellsObj[cellKey] = true;
+    }
+  }
+
+  return lowPriorityCellsObj;
+};
+
 const initialState: FieldSliceState = {
   [PLAYER_TYPE.USER]: initialPlayerFieldState,
   [PLAYER_TYPE.ENEMY]: initialPlayerFieldState,
+  computerCellsPriority: {
+    matrix: new Array(10).fill(0).map(() => new Array(10).fill(0)),
+    low: initLowPriorityCellsObj(),
+    high: {},
+  },
   score: {
     [PLAYER_TYPE.USER]: 0,
     [PLAYER_TYPE.ENEMY]: 0,
   },
   time: 0,
   status: GAME_STATUS.SHIPS_ARRANGEMENT,
+  moveTurn: getRandomBoolean() ? PLAYER_TYPE.USER : PLAYER_TYPE.ENEMY,
 };
 
 export const fieldSlice = createSlice({
@@ -114,6 +144,14 @@ export const fieldSlice = createSlice({
     makeShot: (state, { payload }: PayloadAction<MakeShotPayload>) => {
       makeShotHelper(state, payload);
     },
+    makeComputerShot: (state) => {
+      if (state.status === GAME_STATUS.STARTED) {
+        makeComputerShotHelper(state);
+      }
+    },
+    resetFieldState: () => {
+      return initialState;
+    },
   },
 });
 
@@ -129,5 +167,7 @@ export const {
   randomShipsLocation,
   clearField,
   makeShot,
+  makeComputerShot,
+  resetFieldState
 } = actions;
 export { reducer as fieldReducer };

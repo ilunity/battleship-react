@@ -4,7 +4,7 @@ import { FieldInnerContainer, FieldOuterContainer, FieldRow, FieldTitle } from '
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { Ship } from '../Ship';
-import { PLAYER_TYPE } from '../../store/reducers/field-slice';
+import { PLAYER_TYPE, SHIP_STATUS } from '../../store/reducers/field-slice';
 import { FieldCell } from '../FieldCell';
 
 
@@ -14,7 +14,7 @@ const FieldTypeTitle = {
 };
 
 export const Field: React.FC<FieldProps> = ({ fieldType, draggableShips = false }) => {
-  const ships = useSelector((state: RootState) => state.field[fieldType].ships);
+  const shipsMap = useSelector((state: RootState) => state.field[fieldType].ships);
   const cells = useSelector((state: RootState) => state.field[fieldType].cells);
 
   const fieldStatusesElements = cells.map((column, x) => (
@@ -33,10 +33,13 @@ export const Field: React.FC<FieldProps> = ({ fieldType, draggableShips = false 
     </FieldRow>
   ));
 
-  const shipsElements = fieldType === PLAYER_TYPE.USER
-    ? Object.keys(ships).map((id) => {
-      const { x, y } = ships[id].position;
+  const getShipsElements = () => {
+    const ships = Object.values(shipsMap);
+    const displayedShips = fieldType === PLAYER_TYPE.ENEMY
+      ? ships.filter(({ status }) => status === SHIP_STATUS.SUNK)
+      : ships;
 
+    return displayedShips.map(({ id, position: { x, y } }) => {
       return (
         <Ship
           key={ id }
@@ -47,8 +50,8 @@ export const Field: React.FC<FieldProps> = ({ fieldType, draggableShips = false 
           y={ y }
         />
       );
-    })
-    : [];
+    });
+  };
 
   return (
     <FieldOuterContainer>
@@ -57,7 +60,7 @@ export const Field: React.FC<FieldProps> = ({ fieldType, draggableShips = false 
       </FieldTitle>
       <FieldInnerContainer>
         { fieldStatusesElements }
-        { shipsElements }
+        { getShipsElements() }
       </FieldInnerContainer>
     </FieldOuterContainer>
   );

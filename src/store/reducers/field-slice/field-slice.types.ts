@@ -1,9 +1,17 @@
 export interface FieldSliceState {
   time: number;
-  status: `${GAME_STATUS}`;
+  status: GAME_STATUS;
   score: GameScore;
+  computerCellsPriority: ComputerCellsPriority;
   [PLAYER_TYPE.USER]: PlayerFieldState;
   [PLAYER_TYPE.ENEMY]: PlayerFieldState;
+  moveTurn: PLAYER_TYPE;
+}
+
+export enum GAME_STATUS {
+  SHIPS_ARRANGEMENT = 'shipsArrangement',
+  STARTED = 'started',
+  STOPPED = 'stopped',
 }
 
 export interface GameScore {
@@ -11,10 +19,10 @@ export interface GameScore {
   [PLAYER_TYPE.ENEMY]: number;
 }
 
-export enum GAME_STATUS {
-  SHIPS_ARRANGEMENT = 'shipsArrangement',
-  STARTED = 'started',
-  STOPPED = 'stopped',
+export interface ComputerCellsPriority {
+  matrix: number[][];
+  low: Record<string, boolean>;
+  high: Record<string, boolean>;
 }
 
 export enum PLAYER_TYPE {

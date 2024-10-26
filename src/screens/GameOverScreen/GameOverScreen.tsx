@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, setScreen } from '../../store';
+import { resetFieldState, RootState, setScreen } from '../../store';
 import { Button } from '../../components/Button';
 import { GameLostBG, GameOverContainer, GameWonBG, WinnerPanel } from './GameOverScreen.styles.ts';
 import { SCREEN_TYPE } from '../../store/reducers/app-slice';
@@ -22,6 +22,7 @@ export const GameOverScreen: React.FC = () => {
 
   const goToStartScreen = () => {
     dispatch(setScreen(SCREEN_TYPE.START));
+    dispatch(resetFieldState());
   };
 
   return (

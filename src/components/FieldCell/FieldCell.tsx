@@ -10,7 +10,9 @@ import { ShipDragSourceProps } from '../Ship';
 import {
   AddShipPayload,
   arrangeShip,
-  CELL_STATUS, makeShot, moveShip,
+  CELL_STATUS,
+  makeShot,
+  moveShip,
   PLAYER_TYPE,
   useValidateCells,
 } from '../../store/reducers/field-slice';
@@ -41,6 +43,7 @@ export const FieldCell: React.FC<FieldCellProps> = (
 ) => {
   const validateCells = useValidateCells();
   const ships = useSelector((state: RootState) => state.field[PLAYER_TYPE.USER].ships);
+  const moveTurn = useSelector((state: RootState) => state.field.moveTurn);
   const dispatch = useDispatch();
 
   const handleShipDrop = ({ id, unplaced }: ShipDragSourceProps) => {
@@ -87,7 +90,10 @@ export const FieldCell: React.FC<FieldCellProps> = (
   );
 
   const handleClick = () => {
-    if (fieldType !== PLAYER_TYPE.ENEMY) {
+    const isEnemyField = fieldType === PLAYER_TYPE.ENEMY;
+    const isAlreadyShut = cellType !== CELL_STATUS.NONE;
+    const isPlayerMove = moveTurn === PLAYER_TYPE.USER;
+    if (!isEnemyField || isAlreadyShut || !isPlayerMove) {
       return;
     }
 

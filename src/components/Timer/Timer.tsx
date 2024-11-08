@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { Button } from '../Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { incrementTimer, RootState, setStatus } from '../../store';
+import { decrementTimer, RootState, setScreen, setStatus } from '../../store';
 import { TimerClock, TimerContainer } from './Timer.styles.ts';
 import { GAME_STATUS } from '../../store/reducers/field-slice';
+import { SCREEN_TYPE } from '../../store/reducers/app-slice';
 
 
 const secondsDiv = 1000;
@@ -26,7 +27,7 @@ export const Timer: React.FC = () => {
     intervalRef.current = setInterval(() => {
       const now = new Date().getTime();
       const diff = now - prevTimeRef.current;
-      dispatch(incrementTimer(diff));
+      dispatch(decrementTimer(diff));
       prevTimeRef.current = now;
     }, 1000);
     dispatch(setStatus(GAME_STATUS.STARTED));
@@ -37,6 +38,11 @@ export const Timer: React.FC = () => {
     dispatch(setStatus(GAME_STATUS.STOPPED));
   };
 
+  const finishGame = () => {
+    pause();
+    dispatch(setScreen(SCREEN_TYPE.GAME_OVER));
+  };
+
   useEffect(() => {
     if (!isNotShipsArrangementStatus) {
       return;
@@ -44,9 +50,14 @@ export const Timer: React.FC = () => {
 
     start();
 
-
     return pause;
   }, [isNotShipsArrangementStatus]);
+
+  useEffect(() => {
+    if (time <= 0) {
+      finishGame();
+    }
+  }, [time]);
 
   const seconds = Math.floor((time % minutesDiv) / secondsDiv);
   const minutes = Math.floor((time % hoursDiv) / minutesDiv);

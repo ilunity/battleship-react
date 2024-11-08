@@ -89,7 +89,7 @@ const initialState: FieldSliceState = {
     [PLAYER_TYPE.USER]: 0,
     [PLAYER_TYPE.ENEMY]: 0,
   },
-  time: 0,
+  time: 60 * 5 * 1000,
   status: GAME_STATUS.SHIPS_ARRANGEMENT,
   moveTurn: getRandomBoolean() ? PLAYER_TYPE.USER : PLAYER_TYPE.ENEMY,
 };
@@ -104,8 +104,11 @@ export const fieldSlice = createSlice({
     incrementScore: (state, { payload: { player, score } }: PayloadAction<SetScorePayload>) => {
       state.score[player] += score;
     },
-    incrementTimer: (state, action: PayloadAction<number>) => {
-      state.time += action.payload;
+    setTime: (state, { payload }: PayloadAction<number>) => {
+      state.time = payload;
+    },
+    decrementTimer: (state, action: PayloadAction<number>) => {
+      state.time -= action.payload;
     },
     setStatus: (state, { payload }: PayloadAction<SetStatusPayload>) => {
       state.status = payload;
@@ -159,7 +162,8 @@ const { actions, reducer } = fieldSlice;
 export const {
   setScore,
   incrementScore,
-  incrementTimer,
+  setTime,
+  decrementTimer,
   setStatus,
   arrangeShip,
   moveShip,
@@ -168,6 +172,6 @@ export const {
   clearField,
   makeShot,
   makeComputerShot,
-  resetFieldState
+  resetFieldState,
 } = actions;
 export { reducer as fieldReducer };

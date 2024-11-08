@@ -10,6 +10,7 @@ import {
   AddShipPayload,
   arrangeShip,
   CELL_STATUS,
+  GAME_STATUS,
   makeShot,
   moveShip,
   PLAYER_TYPE,
@@ -42,6 +43,7 @@ export const FieldCell: React.FC<FieldCellProps> = (
   const validateCells = useValidateCells();
   const ships = useSelector((state: RootState) => state.field[PLAYER_TYPE.USER].ships);
   const moveTurn = useSelector((state: RootState) => state.field.moveTurn);
+  const gameStatus = useSelector((state: RootState) => state.field.status);
   const dispatch = useDispatch();
 
   const handleShipDrop = ({ id, unplaced }: ShipDragSourceProps) => {
@@ -88,10 +90,11 @@ export const FieldCell: React.FC<FieldCellProps> = (
   );
 
   const handleClick = () => {
+    const isGameStopped = gameStatus === GAME_STATUS.STOPPED;
     const isEnemyField = fieldType === PLAYER_TYPE.ENEMY;
     const isAlreadyShut = cellType !== CELL_STATUS.NONE;
     const isPlayerMove = moveTurn === PLAYER_TYPE.USER;
-    if (!isEnemyField || isAlreadyShut || !isPlayerMove) {
+    if (isGameStopped || !isEnemyField || isAlreadyShut || !isPlayerMove) {
       return;
     }
 

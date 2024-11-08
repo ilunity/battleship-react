@@ -1,5 +1,5 @@
 import { GameName, StartScreenBG, StartScreenContainer } from './StartScreen.styles.ts';
-import { UserNameForm } from '../../components/UserNameForm';
+import { StartGameForm } from '../../components/StartGameForm';
 
 
 export const StartScreen: React.FC = () => {
@@ -9,7 +9,7 @@ export const StartScreen: React.FC = () => {
       <GameName>
         Морской бой
       </GameName>
-      <UserNameForm />
+      <StartGameForm />
     </StartScreenContainer>
   );
 };

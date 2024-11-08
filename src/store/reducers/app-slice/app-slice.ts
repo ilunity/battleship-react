@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppSliceState, SCREEN_TYPE } from './app-slice.types.ts';
 
 const initialState: AppSliceState = {
-  currentScreen: SCREEN_TYPE.MAIN,
+  currentScreen: SCREEN_TYPE.START,
   username: '',
 };
 

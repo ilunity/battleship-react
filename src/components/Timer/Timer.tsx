@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { Button } from '../Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store';
-import { GAME_STATUS, incrementTimer, startGame, stopGame } from '../../store/reducers/game-slice';
+import { incrementTimer, RootState, setStatus } from '../../store';
 import { TimerClock, TimerContainer } from './Timer.styles.ts';
+import { GAME_STATUS } from '../../store/reducers/field-slice';
 
 
 const secondsDiv = 1000;
@@ -12,8 +12,8 @@ const hoursDiv = minutesDiv * 60;
 
 export const Timer: React.FC = () => {
   const dispatch = useDispatch();
-  const time = useSelector((state: RootState) => state.game.time);
-  const gameStatus = useSelector((state: RootState) => state.game.status);
+  const time = useSelector((state: RootState) => state.field.time);
+  const gameStatus = useSelector((state: RootState) => state.field.status);
 
   const isNotShipsArrangementStatus = gameStatus !== GAME_STATUS.SHIPS_ARRANGEMENT;
 
@@ -29,12 +29,12 @@ export const Timer: React.FC = () => {
       dispatch(incrementTimer(diff));
       prevTimeRef.current = now;
     }, 1000);
-    dispatch(startGame());
+    dispatch(setStatus(GAME_STATUS.STARTED));
   };
 
   const pause = () => {
     clearInterval(intervalRef.current);
-    dispatch(stopGame());
+    dispatch(setStatus(GAME_STATUS.STOPPED));
   };
 
   useEffect(() => {

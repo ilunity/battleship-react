@@ -1,6 +1,6 @@
-import { PLAYER_TYPE } from "../../store/reducers/game-slice";
+import { PLAYER_TYPE } from '../../store/reducers/field-slice';
 
 export interface FieldProps {
-    fieldType: `${PLAYER_TYPE}`;
+    fieldType: PLAYER_TYPE;
     draggableShips?: boolean;
 }

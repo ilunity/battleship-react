@@ -1,9 +1,8 @@
-import { PLAYER_TYPE, ShipState } from '../../store/reducers/game-slice';
+import { PLAYER_TYPE } from '../../store/reducers/field-slice';
 
 export interface ShipDragSourceProps {
   unplaced: boolean;
-  index: number | undefined;
-  size: number | undefined;
+  id: string;
 }
 
 export interface ShipDragReturnProps {
@@ -11,9 +10,9 @@ export interface ShipDragReturnProps {
 }
 
 export interface ShipProps {
-  unplaced?: boolean;
-  index?: number | undefined;
-  fieldType: `${PLAYER_TYPE}`;
-  shipState: ShipState;
+  id: string;
+  fieldType: PLAYER_TYPE;
   draggable?: boolean;
+  x: number;
+  y: number;
 }

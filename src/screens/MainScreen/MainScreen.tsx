@@ -1,17 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FieldsContainer, MainScreenBG, MainScreenContainer, MainScreenInfo } from './MainScreen.styles.ts';
 import { Timer } from '../../components/Timer';
 import { Score } from '../../components/Score';
 import { Field } from '../../components/Field';
-import { GAME_STATUS, PLAYER_TYPE } from '../../store/reducers/game-slice';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { useDispatch, useSelector } from 'react-redux';
+import { makeComputerShot, RootState, setScreen } from '../../store';
 import { ShipsArrangement } from '../../components/ShipsArrangementField';
+import { GAME_STATUS, PLAYER_TYPE, useWinnerSelector } from '../../store/reducers/field-slice';
+import { SCREEN_TYPE } from '../../store/reducers/app-slice';
 
 
 export const MainScreen: React.FC = () => {
-  const gameStatus = useSelector((state: RootState) => state.game.status);
+  const gameStatus = useSelector((state: RootState) => state.field.status);
   const isShipsArrangementStatus = gameStatus === GAME_STATUS.SHIPS_ARRANGEMENT;
+  const moveTurn = useSelector((state: RootState) => state.field.moveTurn);
+  const score = useSelector((state: RootState) => state.field.score);
+  const dispatch = useDispatch();
+  const winner = useWinnerSelector();
+
+  useEffect(() => {
+    if (moveTurn === PLAYER_TYPE.ENEMY) {
+      setTimeout(() => dispatch(makeComputerShot()), 500)
+    }
+  }, [gameStatus, score, moveTurn]);
+
+  useEffect(() => {
+    if (winner) {
+      dispatch(setScreen(SCREEN_TYPE.GAME_OVER));
+    }
+  }, [winner]);
 
   return (
     <MainScreenContainer>

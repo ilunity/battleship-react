@@ -2,85 +2,82 @@
 import React, { ReactNode } from 'react';
 import { FieldCellProps } from './FieldCell.types';
 import { CellWrapper, HitIconWrapper, MissIconWrapper } from './FieldCell.styles.ts';
-import {
-  arrangeShip,
-  ArrangeShipPayload,
-  FIELD_CELL_TYPE,
-  moveShip,
-  MoveShipPayload,
-  PLAYER_TYPE,
-  SHIP_DIRECTION,
-  useValidateShipArrange,
-  useValidateShipMove,
-} from '../../store/reducers/game-slice';
 import MissIcon from '../../assets/game/miss.svg?react';
 import HitIcon from '../../assets/game/hit.svg?react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
 import { ShipDragSourceProps } from '../Ship';
+import {
+  AddShipPayload,
+  arrangeShip,
+  CELL_STATUS,
+  makeShot,
+  moveShip,
+  PLAYER_TYPE,
+  useValidateCells,
+} from '../../store/reducers/field-slice';
+import { RootState } from '../../store';
 
 
-const cellTypeContentMap: Record<`${FIELD_CELL_TYPE}`, ReactNode> = {
-  [FIELD_CELL_TYPE.NONE]: <></>,
-  [FIELD_CELL_TYPE.MISS]: (
+const cellTypeContentMap: Record<CELL_STATUS, ReactNode> = {
+  [CELL_STATUS.NONE]: <></>,
+  [CELL_STATUS.MISS]: (
     <MissIconWrapper>
       <MissIcon />
     </MissIconWrapper>
   ),
-  [FIELD_CELL_TYPE.HIT]: (
+  [CELL_STATUS.HIT]: (
     <HitIconWrapper>
       <HitIcon />
     </HitIconWrapper>
   ),
 };
 
-export const FieldCell: React.FC<FieldCellProps> = ({ x, y, type }) => {
-  const validateShipMove = useValidateShipMove();
-  const validateShipArrange = useValidateShipArrange();
+export const FieldCell: React.FC<FieldCellProps> = (
+  {
+    x,
+    y,
+    cellType,
+    fieldType,
+  },
+) => {
+  const validateCells = useValidateCells();
+  const ships = useSelector((state: RootState) => state.field[PLAYER_TYPE.USER].ships);
+  const moveTurn = useSelector((state: RootState) => state.field.moveTurn);
   const dispatch = useDispatch();
 
-  const handleShipDrop = ({ index, unplaced, size }: ShipDragSourceProps) => {
-    if (unplaced) {
-      return handleShipAdd(size as number);
-    }
+  const handleShipDrop = ({ id, unplaced }: ShipDragSourceProps) => {
+    const shipDirection = ships[id].position.direction;
 
-    handleShipMove({ shipIndex: index as number, xTo: x, yTo: y });
-  };
-
-  const handleShipAdd = (size: number) => {
-    const arrangeShipOptions: ArrangeShipPayload = {
-      field: PLAYER_TYPE.USER,
-      x,
-      y,
-      size,
-      direction: SHIP_DIRECTION.HORIZONTAL,
+    const position = {
+      x, y, direction: shipDirection,
     };
 
-    dispatch(arrangeShip(arrangeShipOptions));
+    const addShipOptions: AddShipPayload = {
+      fieldType: PLAYER_TYPE.USER,
+      id,
+      position,
+    };
+
+    if (unplaced) {
+      dispatch(arrangeShip(addShipOptions));
+    } else {
+      dispatch(moveShip(addShipOptions));
+    }
   };
 
-  const handleShipMove = (moveShipOptions: Omit<MoveShipPayload, 'field'>) => {
-    dispatch(moveShip({
-      ...moveShipOptions,
-      field: PLAYER_TYPE.USER,
-    }));
-  };
+  const validateDrop = ({ id }: ShipDragSourceProps) => {
+    const shipDirection = ships[id].position.direction;
 
-  const validateDrop = ({ index, unplaced, size }: ShipDragSourceProps) => {
-    return unplaced
-      ? validateShipArrange({
-        x,
-        y,
-        field: PLAYER_TYPE.USER,
-        size: size as number,
-        direction: SHIP_DIRECTION.HORIZONTAL
-      })
-      : validateShipMove({
-        xTo: x,
-        yTo: y,
-        field: PLAYER_TYPE.USER,
-        shipIndex: index as number,
-      });
+    const position = {
+      x, y, direction: shipDirection,
+    };
+
+    return validateCells({
+      fieldType: PLAYER_TYPE.USER,
+      id,
+      position,
+    });
   };
 
   const [, drop] = useDrop<ShipDragSourceProps>(
@@ -89,12 +86,29 @@ export const FieldCell: React.FC<FieldCellProps> = ({ x, y, type }) => {
       drop: handleShipDrop,
       canDrop: validateDrop,
     }),
-    [x, y, validateShipMove],
+    [x, y, validateDrop],
   );
 
+  const handleClick = () => {
+    const isEnemyField = fieldType === PLAYER_TYPE.ENEMY;
+    const isAlreadyShut = cellType !== CELL_STATUS.NONE;
+    const isPlayerMove = moveTurn === PLAYER_TYPE.USER;
+    if (!isEnemyField || isAlreadyShut || !isPlayerMove) {
+      return;
+    }
+
+    dispatch(makeShot({
+      fieldType: PLAYER_TYPE.ENEMY,
+      x,
+      y,
+    }));
+  };
+
   return (
-    <CellWrapper ref={ drop }>
-      { cellTypeContentMap[type] }
+    <CellWrapper
+      ref={ drop }
+      onClick={ handleClick }>
+      { cellTypeContentMap[cellType] }
     </CellWrapper>
   );
 };

@@ -1,57 +1,47 @@
 import React from 'react';
 import { ButtonsPanel, ShipsArrangementContainer, UnplacedShipsContainer } from './ShipsArrangement.styles.ts';
-import {
-  clearField,
-  PLAYER_TYPE,
-  randomShipLocation,
-  SHIP_DIRECTION,
-  ShipState,
-  startGame,
-} from '../../store/reducers/game-slice';
 import { Ship } from '../Ship';
 import { Field } from '../Field';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { clearField, randomShipsLocation, RootState, setStatus } from '../../store';
 import { FieldOuterContainer, FieldTitle } from '../Field/Field.styles.ts';
+import { GAME_STATUS, PLAYER_TYPE, Ship as ShipState } from '../../store/reducers/field-slice';
 import { Button } from '../Button';
 
 
 export const ShipsArrangement: React.FC = () => {
   const dispatch = useDispatch();
-  const shipsToArrange: ShipState[] = [];
-  const shipsCount = useSelector((state: RootState) => state.game[PLAYER_TYPE.USER].unplacedShips);
-
-  Object.entries(shipsCount).forEach(([shipSize, count]) => {
-    for (let i = 0; i < count; i++) {
-      shipsToArrange.push({
-        direction: SHIP_DIRECTION.HORIZONTAL,
-        size: +shipSize,
-        x: (+shipSize - 1) * 2,
-        y: i * (+shipSize + 1),
-      });
-    }
-  });
+  const ships = useSelector((state: RootState) => state.field[PLAYER_TYPE.USER].ships);
+  const shipsToArrange: ShipState[] = Object.values(ships).filter(ship => ship.unplaced);
 
   const handleStartGame = () => {
-    dispatch(startGame());
+    dispatch(setStatus(GAME_STATUS.STARTED));
+    dispatch(randomShipsLocation({ fieldType: PLAYER_TYPE.ENEMY }));
   };
 
-  const ships = shipsToArrange.map((ship) => (
-    <Ship
-      key={ `${ship.x} + ${ship.y}` }
-      fieldType={ PLAYER_TYPE.USER }
-      shipState={ ship }
-      draggable
-      unplaced
-    />
-  ));
+  const shipsToArrangeElements = shipsToArrange.map((ship) => {
+    const [size, count] = ship.id.split(':');
+    const x = (+count - 1) * (+size + 1);
+    const y = (+size - 1) * 2;
+
+    return (
+      <Ship
+        key={ ship.id }
+        id={ ship.id }
+        fieldType={ PLAYER_TYPE.USER }
+        x={ x }
+        y={ y }
+        draggable
+      />
+    );
+  });
 
   const handleRandomLocation = () => {
-    dispatch(randomShipLocation({ field: PLAYER_TYPE.USER }));
+    dispatch(randomShipsLocation({ fieldType: PLAYER_TYPE.USER }));
   };
 
   const clear = () => {
-    dispatch(clearField({ field: PLAYER_TYPE.USER }));
+    dispatch(clearField({ fieldType: PLAYER_TYPE.USER }));
   };
 
   return (
@@ -66,7 +56,7 @@ export const ShipsArrangement: React.FC = () => {
         <Button onClick={ clear }>
           Очистить поле
         </Button>
-        { ships.length === 0 && (
+        { shipsToArrange.length === 0 && (
           <Button onClick={ handleStartGame }>
             Начать игру
           </Button>
@@ -77,7 +67,7 @@ export const ShipsArrangement: React.FC = () => {
           Расставьте корабли:
         </FieldTitle>
         <UnplacedShipsContainer>
-          { ships }
+          { shipsToArrangeElements }
         </UnplacedShipsContainer>
       </FieldOuterContainer>
     </ShipsArrangementContainer>

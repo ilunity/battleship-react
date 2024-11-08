@@ -1,7 +1,8 @@
-import { FIELD_CELL_TYPE } from "../../store/reducers/game-slice";
+import { CELL_STATUS, PLAYER_TYPE } from '../../store/reducers/field-slice';
 
 export interface FieldCellProps {
-    x: number;
-    y: number;
-    type: `${FIELD_CELL_TYPE}`;
+  x: number;
+  y: number;
+  fieldType: PLAYER_TYPE;
+  cellType: CELL_STATUS;
 }

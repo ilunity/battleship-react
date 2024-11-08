@@ -1,15 +1,15 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { PLAYER_TYPE } from '../../store/reducers/game-slice';
-import { RootState, setScreen } from '../../store';
+import { resetFieldState, RootState, setScreen } from '../../store';
 import { Button } from '../../components/Button';
 import { GameLostBG, GameOverContainer, GameWonBG, WinnerPanel } from './GameOverScreen.styles.ts';
 import { SCREEN_TYPE } from '../../store/reducers/app-slice';
+import { PLAYER_TYPE } from '../../store/reducers/field-slice';
 
 
 export const GameOverScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const score = useSelector((state: RootState) => state.game.score);
+  const score = useSelector((state: RootState) => state.field.score);
   const username = useSelector((state: RootState) => state.app.username);
 
   const [winner, loser] = score[PLAYER_TYPE.USER] > score[PLAYER_TYPE.ENEMY]
@@ -22,6 +22,7 @@ export const GameOverScreen: React.FC = () => {
 
   const goToStartScreen = () => {
     dispatch(setScreen(SCREEN_TYPE.START));
+    dispatch(resetFieldState());
   };
 
   return (

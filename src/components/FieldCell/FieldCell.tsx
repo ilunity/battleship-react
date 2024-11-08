@@ -1,9 +1,8 @@
 /// <reference types="vite-plugin-svgr/client" />
 import React, { ReactNode } from 'react';
 import { FieldCellProps } from './FieldCell.types';
-import { CellWrapper, HitIconWrapper, MissIconWrapper } from './FieldCell.styles.ts';
+import { CellWrapper, MissIconWrapper } from './FieldCell.styles.ts';
 import MissIcon from '../../assets/game/miss.svg?react';
-import HitIcon from '../../assets/game/hit.svg?react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
 import { ShipDragSourceProps } from '../Ship';
@@ -17,6 +16,7 @@ import {
   useValidateCells,
 } from '../../store/reducers/field-slice';
 import { RootState } from '../../store';
+import { Hit } from '../Hit';
 
 
 const cellTypeContentMap: Record<CELL_STATUS, ReactNode> = {
@@ -27,9 +27,7 @@ const cellTypeContentMap: Record<CELL_STATUS, ReactNode> = {
     </MissIconWrapper>
   ),
   [CELL_STATUS.HIT]: (
-    <HitIconWrapper>
-      <HitIcon />
-    </HitIconWrapper>
+    <Hit />
   ),
 };
 

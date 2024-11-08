@@ -7,6 +7,8 @@ export const CellWrapper = styled.div`
     width: ${CELL_SIZE}px;
     background-color: ${(props) => props.theme.backgroundTransparent};
     border: 1px solid ${(props) => props.theme.borderColor};
+    overflow: hidden;
+    position: relative;
 
     display: flex;
     justify-content: center;
@@ -23,13 +25,5 @@ export const MissIconWrapper = styled(IconWrapper)`
     & svg {
         width: 4px;
         height: 4px;
-    }
-`;
-
-export const HitIconWrapper = styled(IconWrapper)`
-    & svg {
-        width: 24px;
-        height: 24px;
-        fill: ${props => props.theme.dangerColor};
     }
 `;

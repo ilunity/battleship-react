@@ -1,10 +1,10 @@
 import React, { MouseEventHandler } from 'react';
 import { ShipDragReturnProps, ShipDragSourceProps, ShipProps } from './Ship.types';
-import { StyledShip } from './Ship.styles.ts';
+import { StyledShip, Water } from './Ship.styles.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
 import { RootState, rotateShip } from '../../store';
-import { RotateShipPayload, useValidateShipRotate } from '../../store/reducers/field-slice';
+import { RotateShipPayload, SHIP_STATUS, useValidateShipRotate } from '../../store/reducers/field-slice';
 
 
 export const Ship: React.FC<ShipProps> = (
@@ -18,6 +18,7 @@ export const Ship: React.FC<ShipProps> = (
 ) => {
   const ship = useSelector((state: RootState) => state.field[fieldType].ships[id]);
   const unplaced = ship.unplaced;
+  const sunk = ship.status === SHIP_STATUS.SUNK;
   const validateShipRotate = useValidateShipRotate();
   const dispatch = useDispatch();
   const [{ isDragging }, drag] = useDrag<ShipDragSourceProps, unknown, ShipDragReturnProps>(() => ({
@@ -63,6 +64,8 @@ export const Ship: React.FC<ShipProps> = (
       x={ x }
       y={ y }
       direction={ ship.position.direction }
-    />
+    >
+      { sunk && <Water /> }
+    </StyledShip>
   );
 };

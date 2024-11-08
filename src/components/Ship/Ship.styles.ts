@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { CELL_SIZE } from '../FieldCell/FieldCell.styles.ts';
 import { SHIP_DIRECTION } from '../../store/reducers/field-slice';
 
@@ -21,4 +21,23 @@ export const StyledShip = styled.div<StyledShipProps>`
     left: ${props => CELL_SIZE * props.x}px;
     cursor: ${props => props.draggable ? 'pointer' : 'auto'};
     z-index: 1;
+    overflow: hidden;
+`;
+
+const sunkAnimation = keyframes`
+    from {
+        background-color: #0097e6;
+        transform: translateY(100%);
+    }
+    to {
+        background-color: #0097e6;
+        transform: translateY(0px);
+    }
+`;
+
+export const Water = styled.div`
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    animation: 4s ${sunkAnimation} 2s linear forwards;
 `;

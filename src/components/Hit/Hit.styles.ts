@@ -7,7 +7,6 @@ import explosion5 from '../../assets/explosions/ship-explosion/ship-explosion-5.
 import explosion6 from '../../assets/explosions/ship-explosion/ship-explosion-6.png';
 import explosion7 from '../../assets/explosions/ship-explosion/ship-explosion-7.png';
 import explosion8 from '../../assets/explosions/ship-explosion/ship-explosion-8.png';
-import hitImage from '../../assets/game/hit.svg';
 
 const explosion = keyframes`
     10% {
@@ -43,18 +42,44 @@ const explosion = keyframes`
     }
 
     100% {
-        background-image: url(${hitImage});
+        background-image: none;
     }
 `;
 
+const showHitIcon = keyframes`
+    to {
+        opacity: 1;
+    }
+`;
 
-export const Hit = styled.div`
-    animation: 2s ${explosion} linear forwards;
-
+export const HitContainer = styled.div`
+    position: relative;
     width: 24px;
     height: 24px;
+    z-index: 2;
+`;
+
+export const HitExplosion = styled.div`
+    width: 100%;
+    height: 100%;
+    animation: 2s ${explosion} linear forwards;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    z-index: 2;
+`;
+
+export const HitIconWrapper = styled.span`
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    animation: 0.01s ${showHitIcon} 2s forwards;
+
+    & svg {
+        width: 100%;
+        height: 100%;
+        fill: #c30000;
+    }
 `;
